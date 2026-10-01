@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build API image
-        run: docker build -f docker/api/Dockerfile -t ghcr.io/${{ github.repository_owner }}/devops-demo-api:${{ github.sha }} .
+        run: docker build -f Dockerfile -t ghcr.io/${{ github.repository_owner }}/devops-demo-api:${{ github.sha }} .
 
       - name: Push API image
         run: docker push ghcr.io/${{ github.repository_owner }}/devops-demo-api:${{ github.sha }}
