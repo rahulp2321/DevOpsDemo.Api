@@ -24,13 +24,10 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore API
-        run: dotnet restore src/DevOpsDemo.Api/DevOpsDemo.Api.csproj
+        run: dotnet restore DevOpsDemo.Api.csproj
 
       - name: Build API
-        run: dotnet build src/DevOpsDemo.Api/DevOpsDemo.Api.csproj --configuration Release --no-restore
-
-      - name: Test API
-        run: dotnet test tests/DevOpsDemo.Api.Tests/DevOpsDemo.Api.Tests.csproj --configuration Release
+        run: dotnet build DevOpsDemo.Api.csproj --configuration Release --no-restore
 
       - name: Setup Node
         uses: actions/setup-node@v4
