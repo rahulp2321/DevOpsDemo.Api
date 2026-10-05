@@ -1,55 +1,22 @@
-name: CI
+name: CI (pull requests)
 
 on:
   pull_request:
-    branches: [develop, main]
-  push:
-    branches: [develop, main]
+    branches: [main, develop]
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   build-test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-
-      - name: Restore API
-        run: dotnet restore DevOpsDemo.Api.csproj
-
-      - name: Build API
-        run: dotnet build DevOpsDemo.Api.csproj --configuration Release --no-restore
-
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build API image
-        run: docker build -f Dockerfile -t ghcr.io/${{ github.repository_owner }}/devops-demo-api:${{ github.sha }} .
-
-      - name: Push API image
-        run: docker push ghcr.io/${{ github.repository_owner }}/devops-demo-api:${{ github.sha }}
-
-      - name: Create release metadata
-        run: |
-          mkdir -p artifact
-          echo "API_IMAGE=ghcr.io/${{ github.repository_owner }}/devops-demo-api:${{ github.sha }}" > artifact/release.env
-          echo "COMMIT=${{ github.sha }}" >> artifact/release.env
-
-      - name: Upload deployment artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: deployment-${{ github.sha }}
-          path: artifact/
+      - run: dotnet restore DevOpsDemo.Api.csproj
+      - run: dotnet build DevOpsDemo.Api.csproj -c Release --no-restore
+      # - run: dotnet test   # add when you have tests
+      - name: Docker build check (no push)
+        run: docker build -t ci-check .
